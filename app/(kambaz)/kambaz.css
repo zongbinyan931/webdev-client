@@ -1,0 +1,74 @@
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
+/* System sans-serif — Tailwind utilities alone
+   do not set the body font */
+#wd-kambaz {
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    "Noto Sans",
+    "Liberation Sans",
+    Arial,
+    sans-serif;
+  color: #212529;
+  line-height: 1.5;
+}
+#wd-kambaz,
+#wd-kambaz * {
+  box-sizing: border-box;
+}
+@media (min-width: 768px) {
+  .wd-main-content-offset {
+    margin-left: 120px;
+  }
+}
+.list-group.wd {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.list-group.wd > .list-group-item {
+  display: block;
+  padding: 0.4rem 0.75rem;
+  text-decoration: none;
+  border: 0;
+  border-left: 3px solid transparent;
+  color: #dc2626;
+  background-color: transparent;
+  white-space: nowrap;
+}
+
+.list-group.wd > .list-group-item.active {
+  color: black;
+  background-color: white;
+  border-left: 3px solid black !important;
+  font-weight: 600;
+}
+
+body:has(#wd-kambaz) { margin:0; }
+#wd-kambaz h1 {font-size:2rem;font-weight:400;margin:0 0 1rem;}
+#wd-kambaz h2 {font-size:1.4rem;font-weight:500;}
+#wd-kambaz button,#wd-kambaz input,#wd-kambaz select,#wd-kambaz textarea {font:inherit;}
+#wd-kambaz button {cursor:pointer;}
+#wd-kambaz hr {border:0;border-top:1px solid #ddd;margin:1rem 0;}
+#wd-assignments-editor {max-width:800px;}
+#wd-assignments-editor input:not([type=checkbox]),#wd-assignments-editor select,#wd-assignments-editor textarea,#wd-kambaz-account input,#wd-kambaz-account select {box-sizing:border-box;width:100%;max-width:100%;border:1px solid #c7c7c7;border-radius:4px;padding:9px 12px;background:white;min-width:0;}
+#wd-assignments-editor textarea {resize:vertical;}
+.wd-editor-row {display:grid;grid-template-columns:160px minmax(0,1fr);gap:16px;margin:16px 0;align-items:start;}
+.wd-editor-row > div:first-child {text-align:right;padding-top:8px;}
+#wd-assignments-editor fieldset {border:1px solid #ccc;border-radius:4px;padding:16px;margin:0;}
+#wd-assignments-editor fieldset label {display:inline-block;margin:8px 0;}
+#wd-assignments-editor input[type=checkbox] {margin-right:8px;accent-color:#2563eb;}
+#wd-save,#wd-cancel {display:inline-block;border:1px solid #ccc;border-radius:4px;padding:8px 18px;text-decoration:none;color:#222;background:#eee;}
+#wd-save {background:#c7192b;color:white;border-color:#c7192b;}
+#wd-kambaz-account main > div {max-width:400px;}
+#wd-kambaz-account input,#wd-kambaz-account select {margin-bottom:12px;}
+#wd-kambaz-account aside a {display:block;padding:8px 12px;color:#c7192b;text-decoration:none;}
+#wd-kambaz-account main a {display:inline-block;margin:8px 0;color:#2563eb;}
+#wd-signin-screen > a:first-of-type,#wd-signup-screen > a:first-of-type {display:block;background:#2563eb;color:white;border-radius:4px;padding:10px;text-align:center;text-decoration:none;}
+@media(max-width:600px){.wd-editor-row{grid-template-columns:1fr;gap:4px}.wd-editor-row > div:first-child{text-align:left;}#wd-kambaz h1{font-size:1.6rem;}}

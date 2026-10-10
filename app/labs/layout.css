@@ -1,0 +1,4 @@
+.wd-labs-layout {display:flex;gap:16px;align-items:flex-start;}
+.wd-labs-layout > aside {width:110px;flex-shrink:0;}
+.wd-labs-layout > main {min-width:0;flex:1;}
+@media(max-width:600px){.wd-labs-layout{display:block;}.wd-labs-layout > aside{width:auto;}.wd-labs-layout > aside ul{display:flex;gap:12px;flex-wrap:wrap;padding-left:0;list-style:none;}.wd-labs-layout > main{width:100%;}}

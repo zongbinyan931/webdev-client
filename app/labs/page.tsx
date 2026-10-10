@@ -31,7 +31,7 @@ export default function Labs() {
         <li>
           <a
             id="wd-github"
-            href="https://github.com/zongbinyan931/webdev-client"
+            href="https://github.com/zongbinyan931/webdev-client/tree/a2"
             target="_blank"
             rel="noreferrer"
           >
@@ -42,3 +42,4 @@ export default function Labs() {
     </div>
   );
 }
+

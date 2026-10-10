@@ -1,48 +1,31 @@
-# CS5610 — A1: HTML, Next.js, and Kambaz
+# CS5610 Kambaz — A2
 
 Zongbin Yan
 
-## Run locally
+A Next.js App Router implementation of Chapter 2: CSS selectors, the box model, positioning, float and flex layouts, media queries, React Icons, Tailwind utilities, and styled Kambaz screens.
 
-Use Node.js 24, then run:
+## Run locally
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open http://localhost:3000/labs/lab1 for the HTML exercises or http://localhost:3000 for Kambaz. Keep the terminal running while using the app.
+Open http://localhost:3000/labs. The CSS lab is `/labs/lab2`; Tailwind examples are at `/labs/lab2/tailwind`. Kambaz begins at `/account/signin`.
+
+## Verification
 
 ```sh
-npm run lint
 npm run build
-npm start
+npx eslint app
 ```
 
-## Pages
+The `a2` branch contains Chapter 2. `main` retains A1. Submit the `a2` branch repository URL and its public Vercel branch preview on kambaz.dev/assignments/a2.
 
-- `/labs`: name, repository link, and links to Labs 1–5.
-- `/labs/lab1`: headings, paragraphs, lists, tables, images, links, forms, and reusable highlighted components.
-- `/account/signin`, `/account/signup`, `/account/profile`: account mockups.
-- `/dashboard`: three course cards.
-- `/courses/1234/home`: modules and course status.
-- `/courses/1234/modules`: three weeks of module content.
-- `/courses/1234/assignments`: assignment list.
-- `/courses/1234/assignments/123`: assignment editor.
+## Implementation notes
 
-A1 is an HTML interface prototype. Sign in navigates to the dashboard; it does not authenticate. Assignment Save and Cancel return to the list; data is not persisted. Labs 2–5 and the remaining course pages are placeholders for later chapters. Calendar and Inbox show the custom not-found page, as in Chapter 1.
-
-The personal form contains editable sample interests and blank school email, graduation year, and date fields. Review these samples before submission. Do not put real passwords in the source code.
-
-## Deploy and submit
-
-1. Import `zongbinyan931/webdev-client` into Vercel with the Next.js preset and repository root as the root directory.
-2. Deploy the `main` branch. No environment variables or database are needed for A1.
-3. Check `/labs/lab1`, `/dashboard`, and a course assignment editor on the deployed site.
-4. Sign in at https://kambaz.dev/assignments/a1 with your school email and submit the GitHub repository URL and the live Vercel URL there, not in Canvas.
-
-Repository: https://github.com/zongbinyan931/webdev-client
-
-## Course references
-
-Components, exercise identifiers, sample quiz data, and HTML structure follow https://kambaz.dev/book/ch1. Course card and Tesla Bot images come from the course website. A1 intentionally uses simple browser HTML styling; A2 styling belongs on a separate `a2` branch.
+- Course examples and exercise structure: https://kambaz.dev/book/ch2
+- Tailwind theme and utilities are loaded without a global Preflight reset, so navigating between labs preserves the HTML examples' browser styling. Tailwind-specific resets are scoped to its lab.
+- Kambaz screens are UI prototypes for Chapter 2. Sign-in links navigate to the profile, and Save/Cancel return to the assignment list. They do not authenticate users or persist edits. Names, dates and course records in the prototype are sample content.
+- Chapter 2's additional AI sample exercises are included with their specified identifiers. Code was developed with Codex assistance.
+- The left navigation uses a local N monogram. Dashboard images are kept from A1.

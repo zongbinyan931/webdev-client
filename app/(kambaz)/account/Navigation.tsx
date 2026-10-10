@@ -1,11 +1,4 @@
+"use client";
 import Link from "next/link";
-
-export default function AccountNavigation() {
-  return (
-    <div id="wd-account-navigation">
-      <Link href="/account/signin">Signin</Link> <br />
-      <Link href="/account/signup">Signup</Link> <br />
-      <Link href="/account/profile">Profile</Link> <br />
-    </div>
-  );
-}
+import {usePathname} from "next/navigation";
+export default function AccountNavigation(){const path=usePathname();return <nav id="wd-account-navigation" className="wd list-group">{[["Signin","Sign in"],["Signup","Sign up"],["Profile","Profile"]].map(([route,label])=><Link key={route} href={`/account/${route.toLowerCase()}`} className={`list-group-item ${path.endsWith(route.toLowerCase())?'active':''}`}>{label}</Link>)}</nav>;}

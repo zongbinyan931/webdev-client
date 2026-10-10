@@ -1,0 +1,9 @@
+@import "./utilities.css";
+#wd-tailwind-lab, #wd-tailwind-lab * {box-sizing:border-box;}
+#wd-tailwind-lab {font-family:Arial,sans-serif;line-height:1.5;}
+#wd-tailwind-lab :where(h1,h2,h3,p) {margin-block-start:0;}
+#wd-tailwind-lab img {display:block;max-width:100%;}
+
+
+#wd-tailwind-lab .grid > div {min-width:0;overflow-wrap:anywhere;}
+@media(max-width:600px){#wd-tailwind-lab{padding:16px;}}
