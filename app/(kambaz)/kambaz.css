@@ -72,3 +72,5 @@ body:has(#wd-kambaz) { margin:0; }
 #wd-kambaz-account main a {display:inline-block;margin:8px 0;color:#2563eb;}
 #wd-signin-screen > a:first-of-type,#wd-signup-screen > a:first-of-type {display:block;background:#2563eb;color:white;border-radius:4px;padding:10px;text-align:center;text-decoration:none;}
 @media(max-width:600px){.wd-editor-row{grid-template-columns:1fr;gap:4px}.wd-editor-row > div:first-child{text-align:left;}#wd-kambaz h1{font-size:1.6rem;}}
+
+#wd-kambaz-account main a.bg-blue-600 {color:white;text-decoration:none;}

@@ -8,7 +8,7 @@ export default function BackgroundColors() {
           the background of this text is green and the foreground white
         </span>
       </p>
-<p className="wd-bg-color-yellow wd-fg-color-black">Dark text on yellow.</p><p id="wd-ai-bg" className="wd-bg-color-blue wd-fg-color-white">White text on blue.</p>
+<p className="wd-bg-color-yellow wd-fg-color-black">Dark text on yellow.</p><p id="wd-ai-bg" className="wd-bg-color-yellow wd-fg-color-black">Black text on yellow.</p>
     </div>
   );
 }

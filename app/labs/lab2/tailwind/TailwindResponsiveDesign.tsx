@@ -55,7 +55,7 @@ export default function TailwindResponsiveDesign() {
           </div>
         </div>
       </div>
-<div id="wd-ai-responsive" className="mx-auto mt-6 max-w-md md:max-w-2xl rounded-xl bg-white md:bg-indigo-50 shadow-md p-8 lg:p-12"><h3 className="text-xl font-semibold">Rocket Propulsion Fundamentals</h3><p>An in-depth study of the fundamentals of rocket propulsion.</p></div>
+<div id="wd-ai-responsive" className="mx-auto mt-6 w-full max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-2xl md:bg-indigo-50"><div className="md:flex"><img src="/images/reactjs.jpg" alt="React JS sample course" className="h-56 w-full object-cover md:w-48 md:shrink-0"/><div className="min-w-0 p-8 lg:p-12"><div className="text-sm font-semibold tracking-wide text-indigo-500 uppercase">Professional Courses</div><h3 className="text-lg font-medium">Rocket Propulsion Fundamentals</h3><p className="text-gray-500">An in-depth study of the fundamentals of rocket propulsion...</p></div></div></div>
     </div>
   );
 }

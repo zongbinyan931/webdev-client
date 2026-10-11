@@ -11,13 +11,13 @@ export default function Positions() {
           <div className="wd-pos-relative-nudge-up-right wd-bg-color-blue wd-fg-color-white wd-dimension-landscape">
             Landscape
           </div>
-          <div className="wd-bg-color-red wd-dimension-square">Square</div>
+          <div className="wd-bg-color-red wd-dimension-square">Square</div><div className="wd-extra-relative wd-dimension-square wd-bg-color-yellow">Relative offset</div><div id="wd-ai-relative" className="wd-ai-pos-relative-nudge wd-dimension-square wd-bg-color-red">Relative nudge</div>
         </div>
       </div>
 
       <div id="wd-css-position-absolute">
         <h2>Absolute position</h2>
-        <div className="wd-pos-relative" style={{ height: 150 }}>
+        <div className="wd-pos-relative" style={{ height: 250 }}>
           <div className="wd-pos-absolute-10-10 wd-bg-color-yellow wd-dimension-portrait">
             Portrait
           </div>
@@ -26,7 +26,7 @@ export default function Positions() {
           </div>
           <div className="wd-pos-absolute-120-20 wd-bg-color-red wd-dimension-square">
             Square
-          </div>
+          </div><div className="wd-extra-absolute wd-dimension-square wd-bg-color-blue">Bottom left</div><div id="wd-ai-absolute" className="wd-ai-pos-absolute-br wd-dimension-square wd-bg-color-green">Bottom right</div>
         </div>
         <br /><br /><br /><br /><br /><br /><br />
       </div>
@@ -38,9 +38,9 @@ export default function Positions() {
         rest of the page. Its position is &quot;Fixed&quot;.
         <div className="wd-pos-fixed wd-dimension-square wd-bg-color-blue wd-fg-color-white">
           Fixed position
-        </div>
+        </div><span className="wd-extra-fixed">CSS lab</span><span id="wd-ai-fixed" className="wd-ai-pos-fixed">AI fixed</span>
+
       </div>
-<div className="wd-extra-relative wd-dimension-square wd-bg-color-yellow">Relative offset</div><div id="wd-ai-relative" className="wd-ai-pos-relative-nudge wd-dimension-square wd-bg-color-red">Relative nudge</div><div className="wd-extra-stack wd-bg-color-yellow"><div className="wd-extra-absolute wd-dimension-square wd-bg-color-blue">Bottom left</div><div id="wd-ai-absolute" className="wd-ai-pos-absolute-br wd-dimension-square wd-bg-color-green">Bottom right</div></div><span className="wd-extra-fixed">CSS lab</span><span id="wd-ai-fixed" className="wd-ai-pos-fixed">AI fixed</span>
     </div>
   );
 }

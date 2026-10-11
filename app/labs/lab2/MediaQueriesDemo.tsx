@@ -9,16 +9,16 @@ export default function MediaQueriesDemo() {
       </p>
       <ul>
         <li className="wd-mq-rule-default">
-          Default is White text on Green background
+          Base rule: white text on green (overridden by the active range)
         </li>
         <li className="wd-mq-rule-750">
-          750px to 1000px: Black text on Yellow background
+          750px to 999px: Black text on Yellow background
         </li>
         <li className="wd-mq-rule-1000">
-          1000px to 1250px: White text on Blue background
+          1000px to 1249px: White text on Blue background
         </li>
         <li className="wd-mq-rule-1250">
-          Above 1250px: White text on Red background
+          1250px and above: White text on Red background
         </li>
       <li className="wd-mq-extra">At least 1500px: orange border</li><li className="wd-mq-rule-ai">Below 750px: purple background, white text</li></ul>
     </div>
