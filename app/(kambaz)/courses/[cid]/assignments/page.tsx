@@ -1,4 +1,5 @@
 import { FaPlus, FaSearch } from "react-icons/fa";
+import * as db from "../../../database";
 import AssignmentItem from "./AssignmentItem";
 
 export default async function Assignments({
@@ -45,15 +46,11 @@ export default async function Assignments({
         </button>
       </h3>
       <ul id="wd-assignment-list" className="m-0 list-none p-0">
-        <AssignmentItem
-          cid={cid}
-          aid="123"
-          title="A1 - ENV + HTML"
-          details="Multiple Modules | Not available until September 14 at 12:00am | Due October 11 at 11:59pm | 100 pts"
-        />
-        <AssignmentItem cid={cid} aid="234" title="A2 - CSS + TAILWIND" details="Multiple Modules | Due October 11 at 11:59pm | 100 pts" />
-        <AssignmentItem cid={cid} aid="345" title="A3 - JS + REACT" details="Multiple Modules | 100 pts" />
-      <AssignmentItem cid={cid} aid="practice" title="Responsive Layout Practice" details="Practice Module | Due October 18 at 11:59pm | 100 pts"/><AssignmentItem cid={cid} aid="ai-a" title="A9 - Sample assignment" details="Sample Module | Due October 25 at 11:59pm | 100 pts"/></ul>
+        {db.assignments.filter((assignment) => assignment.course === cid).map((assignment) => (
+          <AssignmentItem key={assignment._id} cid={cid} aid={assignment._id} title={assignment.title}
+            details={`Available ${assignment.available} | Due ${assignment.due} | ${assignment.points} pts`} />
+        ))}
+      </ul>
     </div>
   );
 }

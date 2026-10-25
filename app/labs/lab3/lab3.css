@@ -1,0 +1,11 @@
+#wd-lab3, #wd-lab3-types { font-family: Arial, sans-serif; line-height: 1.5; color: #171717; }
+#wd-lab3 h1 { font-size: 1.8rem; }
+#wd-lab3 h2, #wd-lab3 h3, #wd-lab3 h4 { font-size: 1.2rem; margin: 20px 0 10px; }
+#wd-lab3 h5 { font-size: 1rem; margin: 12px 0 4px; }
+#wd-lab3 hr { border: 0; border-top: 1px solid #ddd; margin: 18px 0; }
+#wd-lab3 pre { background: #f5f5f5; padding: 12px; overflow-x: auto; }
+#wd-lab3 table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+#wd-lab3 th, #wd-lab3 td { border: 1px solid #bbb; padding: 8px; text-align: left; overflow-wrap: anywhere; }
+#wd-lab3 #wd-todo-list ul { padding: 0; list-style: none; }
+#wd-lab3 #wd-todo-list li { padding: 8px 0; border-bottom: 1px solid #ddd; }
+#wd-lab3 #wd-todo-list input { margin-right: 8px; }

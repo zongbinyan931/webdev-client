@@ -2,3 +2,8 @@
 .wd-labs-layout > aside {width:110px;flex-shrink:0;}
 .wd-labs-layout > main {min-width:0;flex:1;}
 @media(max-width:600px){.wd-labs-layout{display:block;}.wd-labs-layout > aside{width:auto;}.wd-labs-layout > aside ul{display:flex;gap:12px;flex-wrap:wrap;padding-left:0;list-style:none;}.wd-labs-layout > main{width:100%;}}
+
+#wd-labs-toc ul {list-style:none;padding-left:0;}
+#wd-labs-toc a {display:block;padding:7px 9px;border-radius:5px;text-decoration:none;color:#174ea6;}
+#wd-labs-toc a.active {background:#2563eb;color:white;}
+#wd-labs-toc p {font-weight:600;}

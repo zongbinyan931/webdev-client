@@ -1,11 +1,21 @@
 "use client";
 import Link from "next/link";
-import {usePathname} from "next/navigation";
-export default function CourseNavigation({cid}:{cid:string}) {
- const path=usePathname();
- return <nav id="wd-courses-navigation" aria-label="Course" className="wd list-group rounded-none text-lg">{["Home","Modules","Piazza","Zoom","Assignments","Quizzes","Grades","People"].map(label=>{
- const href=`/courses/${cid}/${label.toLowerCase()}`;
- return <Link key={label} id={`wd-course-${label.toLowerCase()}-link`} href={href} aria-current={path===href || path.startsWith(href+'/')?'page':undefined} className={`list-group-item ${path===href || path.startsWith(href+'/')?'active':'text-red-600'}`}>{label}</Link>;
- })}<Link id="wd-course-ai-link" href={`/courses/${cid}/home`} className="list-group-item border-0 text-red-600">Sample</Link></nav>;
+import { usePathname } from "next/navigation";
+const LINKS = [
+  { label: "Home", segment: "home" }, { label: "Modules", segment: "modules" },
+  { label: "Piazza", segment: "piazza" }, { label: "Zoom", segment: "zoom" },
+  { label: "Assignments", segment: "assignments" }, { label: "Quizzes", segment: "quizzes" },
+  { label: "Grades", segment: "grades" }, { label: "People", segment: "people/table" },
+  { label: "Announcements", segment: "announcements" },
+];
+export default function CourseNavigation({ cid }: { cid: string }) {
+  const pathname = usePathname();
+  return <nav aria-label="Course" className="wd-courses-navigation wd list-group rounded-none text-lg">
+    {LINKS.map(({ label, segment }) => {
+      const href = `/courses/${cid}/${segment}`;
+      const active = pathname === href || pathname.startsWith(href + "/");
+      return <Link key={segment} href={href} aria-current={active ? "page" : undefined}
+        className={`list-group-item ${active ? "active" : "text-red-600"}`}>{label}</Link>;
+    })}
+  </nav>;
 }
-

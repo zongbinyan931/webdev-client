@@ -1,0 +1,18 @@
+#wd-lab3 .wd-bg-yellow {
+  background-color: lightyellow;
+}
+#wd-lab3 .wd-bg-blue {
+  background-color: lightblue;
+}
+#wd-lab3 .wd-bg-red {
+  background-color: lightcoral;
+}
+#wd-lab3 .wd-bg-green {
+  background-color: lightgreen;
+}
+#wd-lab3 .wd-fg-black {
+  color: black;
+}
+#wd-lab3 .wd-padding-10px {
+  padding: 10px;
+}
