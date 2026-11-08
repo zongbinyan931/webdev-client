@@ -1,0 +1,35 @@
+@import "tailwindcss";
+#wd-lab4 button {
+  border: 1px solid #9ca3af;
+  border-radius: 4px;
+  padding: 5px 12px;
+  margin: 4px;
+  background: #f3f4f6;
+  color: #171717;
+  cursor: pointer;
+}
+#wd-lab4 input:not([type="checkbox"]),
+#wd-lab4 select,
+#wd-lab4 textarea {
+  border: 1px solid #9ca3af;
+  border-radius: 4px;
+  padding: 5px;
+  margin: 4px;
+  max-width: 100%;
+}
+#wd-lab4 label {
+  display: block;
+}
+#wd-lab4 pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+#wd-lab4 a {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+#wd-lab4 button:focus-visible,
+#wd-lab4 input:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}

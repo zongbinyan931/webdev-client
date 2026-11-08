@@ -1,55 +1,71 @@
-import { FaPlus, FaSearch } from "react-icons/fa";
-import * as db from "../../../database";
+"use client";
+import { use, useState } from "react";
+import Link from "next/link";
+import { useAssignmentsStore } from "../../../store/assignmentsStore";
+import { useAccount } from "../../../account/AccountContext";
 import AssignmentItem from "./AssignmentItem";
-
-export default async function Assignments({
+export default function Assignments({
   params,
 }: {
   params: Promise<{ cid: string }>;
 }) {
-  const { cid } = await params;
+  const { cid } = use(params);
+  const { assignments, deleteAssignment } = useAssignmentsStore();
+  const { currentUser } = useAccount();
+  const edit = !currentUser || ["FACULTY", "ADMIN"].includes(currentUser.role);
+  const [search, setSearch] = useState("");
   return (
     <div id="wd-assignments">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <div className="relative">
-          <FaSearch className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-neutral-500" />
-          <input
-            placeholder="Search for Assignments"
-            id="wd-search-assignment"
-            className="rounded border py-1.5 pr-3 pl-9 text-sm"
-          />
-        </div>
-        <div className="flex gap-2">
-          <button
-            id="wd-add-assignment-group"
-            type="button"
-            className="inline-flex items-center gap-1 rounded border px-3 py-1.5 text-sm"
-          >
-            <FaPlus /> Group
-          </button>
-          <button
+      <div className="mb-4 flex flex-wrap justify-between gap-3">
+        <input
+          aria-label="Search assignments"
+          placeholder="Search for Assignments"
+          className="rounded border p-2"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        {edit && (
+          <Link
             id="wd-add-assignment"
-            type="button"
-            className="inline-flex items-center gap-1 rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white"
+            className="rounded bg-red-600 px-3 py-2 text-white"
+            href={`/courses/${cid}/assignments/new`}
           >
-            <FaPlus /> Assignment
-          </button>
-        </div>
+            + Assignment
+          </Link>
+        )}
       </div>
-      <h3
-        id="wd-assignments-title"
-        className="mb-3 flex items-center justify-between rounded bg-neutral-200 p-3 text-lg"
-      >
-        <span>ASSIGNMENTS 40% of Total</span>
-        <button type="button" className="rounded border bg-white px-2 py-0.5 text-sm">
-          <FaPlus />
-        </button>
-      </h3>
-      <ul id="wd-assignment-list" className="m-0 list-none p-0">
-        {db.assignments.filter((assignment) => assignment.course === cid).map((assignment) => (
-          <AssignmentItem key={assignment._id} cid={cid} aid={assignment._id} title={assignment.title}
-            details={`Available ${assignment.available} | Due ${assignment.due} | ${assignment.points} pts`} />
-        ))}
+      <h3 className="mb-3 bg-neutral-200 p-3">ASSIGNMENTS 40% of Total</h3>
+      <ul id="wd-assignment-list" className="list-none p-0">
+        {assignments
+          .filter(
+            (a) =>
+              a.course === cid &&
+              a.title.toLowerCase().includes(search.toLowerCase()),
+          )
+          .map((a) => (
+            <li key={a._id}>
+              <ul className="list-none p-0">
+                <AssignmentItem
+                  cid={cid}
+                  aid={a._id}
+                  title={a.title}
+                  details={`Available ${a.available} | Due ${a.due} | ${a.points} pts`}
+                />
+              </ul>
+              {edit && (
+                <button
+                  className="mb-3 text-red-700"
+                  aria-label={`Delete ${a.title}`}
+                  onClick={() => {
+                    if (confirm(`Delete ${a.title}?`))
+                      deleteAssignment(a._id, cid);
+                  }}
+                >
+                  Delete
+                </button>
+              )}
+            </li>
+          ))}
       </ul>
     </div>
   );

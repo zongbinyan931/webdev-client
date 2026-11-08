@@ -1,30 +1,62 @@
+"use client";
+import { useState } from "react";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
+import { useAccount } from "../AccountContext";
 export default function Signin() {
+  const { signin } = useAccount();
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   return (
-    <div id="wd-signin-screen">
-      <h3>Sign in</h3>
-      <input aria-label="username"
-        placeholder="username"
-        className="wd-username w-full rounded border border-neutral-300 p-2"
-        defaultValue="zongbin"
-      />{" "}
-      <br />
-      <input aria-label="password"
-        placeholder="password"
-        type="password"
-        className="wd-password w-full rounded border border-neutral-300 p-2"
-        defaultValue="123"
-      />{" "}
-      <br />
-      <label htmlFor="wd-ai-signin-note">Sample note</label><input id="wd-ai-signin-note" placeholder="sample note" className="w-full rounded border border-neutral-300 p-2"/>
-<Link className="w-full rounded bg-blue-600 px-4 py-2 text-center text-white no-underline" href="/dashboard" id="wd-signin-btn">
+    <form
+      id="wd-signin-screen"
+      className="max-w-md space-y-3"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (signin(username.trim(), password)) router.push("/dashboard");
+        else setError("Invalid username or password.");
+      }}
+    >
+      <h2>Sign in</h2>
+      <label className="block">
+        Username
+        <input
+          required
+          id="wd-username"
+          className="w-full rounded border p-2"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          autoComplete="username"
+        />
+      </label>
+      <label className="block">
+        Password
+        <input
+          required
+          id="wd-password"
+          className="w-full rounded border p-2"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
+        />
+      </label>
+      {error && <p role="alert">{error}</p>}
+      <button
+        id="wd-signin-btn"
+        className="rounded bg-red-600 px-4 py-2 text-white"
+      >
         Sign in
-      </Link>{" "}
-      <br />
-      <Link href="/account/signup" id="wd-signup-link">
-        Sign up
-      </Link>
-    </div>
+      </button>
+      <p>
+        <Link href="/account/signup">Sign up</Link>
+      </p>
+      <p className="text-sm">
+        Practice accounts: iron_man (student), nick_fury (faculty). Password:
+        123. These accounts are for this client-side prototype.
+      </p>
+    </form>
   );
 }

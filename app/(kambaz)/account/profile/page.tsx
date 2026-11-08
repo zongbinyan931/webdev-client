@@ -1,42 +1,92 @@
+"use client";
+import { useState } from "react";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
+import { useAccount, User } from "../AccountContext";
+function ProfileForm({ user }: { user: User }) {
+  const [profile, setProfile] = useState(user);
+  const [saved, setSaved] = useState(false);
+  const { updateUser, signout } = useAccount();
+  const router = useRouter();
+  return (
+    <form
+      className="max-w-md space-y-3"
+      onSubmit={(e) => {
+        e.preventDefault();
+        updateUser(profile);
+        setSaved(true);
+      }}
+    >
+      <h2>Profile</h2>
+      {(
+        [
+          "username",
+          "password",
+          "firstName",
+          "lastName",
+          "email",
+          "dob",
+        ] as const
+      ).map((key) => (
+        <label className="block" key={key}>
+          {key}
+          <input
+            className="block w-full rounded border p-2"
+            type={
+              key === "password"
+                ? "password"
+                : key === "email"
+                  ? "email"
+                  : key === "dob"
+                    ? "date"
+                    : "text"
+            }
+            value={profile[key]}
+            onChange={(e) => {
+              setSaved(false);
+              setProfile({ ...profile, [key]: e.target.value });
+            }}
+          />
+        </label>
+      ))}
+      <label>
+        Role
+        <select
+          value={profile.role}
+          onChange={(e) => setProfile({ ...profile, role: e.target.value })}
+        >
+          {["STUDENT", "FACULTY", "TA", "ADMIN", "USER"].map((r) => (
+            <option key={r}>{r}</option>
+          ))}
+        </select>
+      </label>
+      <div className="flex gap-3">
+        <button className="rounded bg-red-600 px-4 py-2 text-white">
+          Save
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            signout();
+            router.push("/account/signin");
+          }}
+        >
+          Sign out
+        </button>
+      </div>
+      {saved && <p role="status">Profile saved.</p>}
+    </form>
+  );
+}
 export default function Profile() {
+  const { currentUser } = useAccount();
   return (
     <div id="wd-profile-screen">
-      <h3>Profile</h3>
-      <input aria-label="username"
-        defaultValue="zongbin"
-        placeholder="username"
-        className="wd-username w-full rounded border border-neutral-300 p-2"
-      />
-      <br />
-      <input aria-label="password"
-        defaultValue="123"
-        placeholder="password"
-        type="password"
-        className="wd-password w-full rounded border border-neutral-300 p-2"
-      />
-      <br />
-      <input className="mb-3 w-full rounded border border-neutral-300 p-2" aria-label="First Name"
-        defaultValue="Zongbin"
-        placeholder="First Name"
-        id="wd-firstname"
-      />
-      <br />
-      <input className="mb-3 w-full rounded border border-neutral-300 p-2" aria-label="Last Name" defaultValue="Yan" placeholder="Last Name" id="wd-lastname" />
-      <br />
-      <input className="mb-3 w-full rounded border border-neutral-300 p-2" aria-label="Date of birth" type="date" id="wd-dob" />
-      <br />
-      <input className="mb-3 w-full rounded border border-neutral-300 p-2" aria-label="School email" placeholder="School email" type="email" id="wd-email" />
-      <br />
-      <select aria-label="Role" className="mb-3 w-full rounded border border-neutral-300 p-2" defaultValue="STUDENT" id="wd-role">
-        <option value="USER">User</option>
-        <option value="ADMIN">Admin</option>
-        <option value="FACULTY">Faculty</option>
-        <option value="STUDENT">Student</option>
-      </select>
-      <br />
-      <Link className="inline-flex items-center justify-center rounded bg-blue-600 px-4 py-2 text-white no-underline" href="/account/signin">Sign out</Link>
+      {currentUser ? (
+        <ProfileForm key={currentUser._id} user={currentUser} />
+      ) : (
+        <Link href="/account/signin">Sign in to view your profile</Link>
+      )}
     </div>
   );
 }

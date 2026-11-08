@@ -11,15 +11,32 @@ const LINKS = [
   { href: "/", label: "Kambaz" },
   { href: "https://kambaz.dev/book/ch1", label: "Chapter 1" },
   { href: "https://kambaz.dev/book/ch3", label: "Book Ch3" },
+  { href: "https://kambaz.dev/book/ch4", label: "Book Ch4" },
   { href: "https://github.com/zongbinyan931/webdev-client", label: "GitHub" },
 ];
 export default function TOC() {
   const pathname = usePathname();
-  return <nav aria-label="Labs table of contents" id="wd-labs-toc">
-    <p>Zongbin Yan</p><ul>{LINKS.map(({href, label}) => {
-      const active = pathname === href || (href.startsWith("/labs/lab") && pathname.startsWith(href + "/"));
-      return <li key={href}><Link href={href} aria-current={active ? "page" : undefined}
-        className={active ? "active" : undefined}>{label}</Link></li>;
-    })}</ul>
-  </nav>;
+  return (
+    <nav aria-label="Labs table of contents" id="wd-labs-toc">
+      <p>Zongbin Yan</p>
+      <ul>
+        {LINKS.map(({ href, label }) => {
+          const active =
+            pathname === href ||
+            (href.startsWith("/labs/lab") && pathname.startsWith(href + "/"));
+          return (
+            <li key={href}>
+              <Link
+                href={href}
+                aria-current={active ? "page" : undefined}
+                className={active ? "active" : undefined}
+              >
+                {label}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
 }

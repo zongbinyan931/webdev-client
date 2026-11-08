@@ -2,26 +2,28 @@
 
 Zongbin Yan
 
-Next.js coursework for HTML, CSS, JavaScript, and React. The `a3` branch contains Chapter 3.
+The `a4` branch adds Chapter 4 client state to the Kambaz application.
 
-## Run locally
+## Run
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open http://localhost:3000/labs. Lab 3 is at `/labs/lab3`, with TypeScript examples at `/labs/lab3/types`. Labs 1 and 2 remain available from the sidebar.
+Open http://localhost:3000/labs/lab4 for the event, form, Context, Zustand, Redux, and custom-hook exercises. Labs 1–3 remain available in the sidebar.
 
-Kambaz starts at `/account/signin`. The dashboard at `/dashboard` lists the courses in `app/(kambaz)/database/courses.json`. Each course has its own modules, assignments, and people, selected by the course ID in the URL.
+Kambaz starts at `/dashboard`. Courses, modules, assignments, and enrollments use Zustand stores seeded from the local JSON files. The account context manages sign-in, sign-up, and profile changes. Modules and Home display the same shared module state.
 
-## Check the project
+Demo sign-in accounts: `nick_fury` (faculty) and `iron_man` (student), both with password `123`. Signed-out visitors can explore the course-editing prototype. Signed-in students see enrollment controls and read-only course content. Profile requires a signed-in user.
+
+Changes last while navigating within Kambaz and reset on a full reload. The Lab 4 saved-note example uses localStorage. This chapter has no backend authentication or server persistence.
+
+## Check
 
 ```sh
 npm run lint
 npm run build
 ```
 
-The application uses local JSON files for course data. Sign-in and assignment editing are interface exercises: they do not authenticate users or save changes. Save and Cancel return to the assignment list. Calendar, Inbox, History, and Announcements are navigation placeholders for this chapter.
-
-Course instructions and reference data: https://kambaz.dev/book/ch3
+Course chapter: https://kambaz.dev/book/ch4
