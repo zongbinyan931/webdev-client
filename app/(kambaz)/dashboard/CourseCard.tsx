@@ -1,13 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { ReactNode } from "react";
 
 export default function CourseCard({
-  _id, name, description, image,
+  _id,
+  name,
+  description,
+  image,
+  children,
 }: {
   _id: string;
   name: string;
   description: string;
   image: string;
+  children?: ReactNode;
 }) {
   return (
     <div className="wd-dashboard-course w-[300px] max-w-full overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm">
@@ -29,13 +35,12 @@ export default function CourseCard({
           <p className="wd-dashboard-course-title m-0 mb-3 h-[100px] overflow-hidden text-sm text-neutral-600">
             {description}
           </p>
-          <span
-            className="inline-flex items-center justify-center rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white"
-          >
+          <span className="inline-flex items-center justify-center rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white">
             Go
           </span>
         </div>
       </Link>
+      {children}
     </div>
   );
 }

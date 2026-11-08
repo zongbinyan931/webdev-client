@@ -116,12 +116,12 @@ export default function Dashboard() {
       <h2 id="wd-dashboard-published">Published Courses ({visible.length})</h2>
       <div id="wd-dashboard-courses" className="flex flex-wrap gap-6">
         {visible.map((c) => (
-          <div key={c._id}>
-            <CourseCard {...c} />
-            <div className="flex gap-3 py-2">
+          <CourseCard key={c._id} {...c}>
+            <div className="flex gap-3 px-4 pb-4">
               {canEdit && (
                 <>
                   <button
+                    type="button"
                     onClick={() => {
                       setCourse({ ...c });
                       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -130,6 +130,7 @@ export default function Dashboard() {
                     Edit
                   </button>
                   <button
+                    type="button"
                     className="text-red-700"
                     onClick={() => {
                       if (confirm(`Delete ${c.name}?`)) {
@@ -161,7 +162,7 @@ export default function Dashboard() {
                   </button>
                 ))}
             </div>
-          </div>
+          </CourseCard>
         ))}
       </div>
       {visible.length === 0 && (
