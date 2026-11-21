@@ -15,6 +15,9 @@ export default function CourseLayout({
   params: Promise<{ cid: string }>;
 }) {
   const { cid } = use(params);
+  const loaded = useCoursesStore((s) => s.loaded);
+  const error = useCoursesStore((s) => s.error);
+  const loadCourses = useCoursesStore((s) => s.loadCourses);
   const course = useCoursesStore((s) => s.courses.find((c) => c._id === cid));
   const { currentUser } = useAccount();
   const enrolled = useEnrollmentsStore((s) =>
@@ -30,6 +33,8 @@ export default function CourseLayout({
     if (blocked) router.replace("/dashboard");
   }, [blocked, router]);
   if (blocked) return null;
+  if (!loaded) return <p role="status">Loading course…</p>;
+  if (error) return <p role="alert">{error} <button onClick={() => void loadCourses()}>Retry</button></p>;
   if (!course)
     return (
       <p>

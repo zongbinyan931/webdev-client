@@ -1,0 +1,10 @@
+import { http } from "@/lib/http";
+import type { User } from "@/lib/types";
+const clean = (user: User): User => ({ ...user, password: "" });
+export const signin = async (username: string, password: string) => clean((await http.post<User>("/api/users/signin", { username, password })).data);
+export const signup = async (user: User) => clean((await http.post<User>("/api/users/signup", user)).data);
+export const profile = async () => clean((await http.get<User>("/api/users/profile")).data);
+export const signout = async () => { await http.post("/api/users/signout"); };
+export const updateUser = async (user: User) => clean((await http.put<User>(`/api/users/${user._id}`, user)).data);
+export const addUser = async (user: User) => clean((await http.post<User>("/api/users", user)).data);
+export const deleteUser = async (id: string) => { await http.delete(`/api/users/${id}`); };

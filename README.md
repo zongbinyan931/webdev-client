@@ -2,22 +2,27 @@
 
 Zongbin Yan
 
-The `a4` branch adds Chapter 4 client state to the Kambaz application.
+The `a5` branch connects Kambaz to an Express server and adds the Chapter 5 HTTP exercises.
 
-## Run
+## Run locally
+
+Start [webdev-server](https://github.com/zongbinyan931/webdev-server/tree/a5) on port 4000 first. In this project:
 
 ```sh
 npm ci
+cp .env.example .env.local
 npm run dev
 ```
 
-Open http://localhost:3000/labs/lab4 for the event, form, Context, Zustand, Redux, and custom-hook exercises. Labs 1–3 remain available in the sidebar.
+Open http://localhost:3000/labs/lab5 for the HTTP exercises or `/dashboard` for Kambaz. Labs 1–4 remain in the sidebar.
 
-Kambaz starts at `/dashboard`. Courses, modules, assignments, and enrollments use Zustand stores seeded from the local JSON files. The account context manages sign-in, sign-up, and profile changes. Modules and Home display the same shared module state.
+Courses, modules, assignments, enrollments, and accounts are read from Express. Zustand caches the responses for the UI. Changes survive page refreshes while the server is running; restarting the server restores the seed data. Sign-in uses a server session.
 
-Demo sign-in accounts: `nick_fury` (faculty) and `iron_man` (student), both with password `123`. Signed-out visitors can explore the course-editing prototype. Signed-in students see enrollment controls and read-only course content. Profile requires a signed-in user.
+Demo accounts: `nick_fury` (faculty) and `iron_man` (student), password `123`. Faculty can edit course content. Students can enroll, unenroll, and view their courses.
 
-Changes last while navigating within Kambaz and reset on a full reload. The Lab 4 saved-note example uses localStorage. This chapter has no backend authentication or server persistence.
+## Deployment
+
+Set `NEXT_PUBLIC_HTTP_SERVER` on Vercel to the Render server's HTTPS origin without a trailing slash. Include the Preview environment for the `a5` branch and redeploy after changing the value. The server's `CLIENT_URL` must include the Vercel origin.
 
 ## Check
 
@@ -26,4 +31,4 @@ npm run lint
 npm run build
 ```
 
-Course chapter: https://kambaz.dev/book/ch4
+Course chapter: https://kambaz.dev/book/ch5

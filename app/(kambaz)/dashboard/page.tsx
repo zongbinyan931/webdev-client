@@ -1,16 +1,23 @@
 "use client";
+import { errorMessage } from "@/lib/http";
 import { useState } from "react";
 import CourseCard from "./CourseCard";
 import { emptyCourse, useCoursesStore } from "../store/coursesStore";
 import { useEnrollmentsStore } from "../store/enrollmentsStore";
 import { useAccount } from "../account/AccountContext";
 export default function Dashboard() {
-  const { courses, addCourse, updateCourse, deleteCourse } = useCoursesStore();
-  const { enrollments, enroll, unenroll } = useEnrollmentsStore();
+  const { courses, loaded, error, loadCourses, addCourse, updateCourse, deleteCourse } = useCoursesStore();
+  const { enrollments, loadEnrollments, enroll, unenroll } = useEnrollmentsStore();
   const { currentUser } = useAccount();
   const [course, setCourse] = useState({ ...emptyCourse });
   const [all, setAll] = useState(false);
   const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function run(action: () => Promise<void>) {
+    setBusy(true); setMessage("");
+    try { await action(); } catch (error) { setMessage(errorMessage(error)); }
+    finally { setBusy(false); }
+  }
   const canEdit =
     !currentUser || ["FACULTY", "ADMIN"].includes(currentUser.role);
   const visible = courses.filter(
@@ -23,6 +30,8 @@ export default function Dashboard() {
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1>
+      {!loaded && <p role="status">Loading courses…</p>}
+      {error && <p role="alert">{error} <button onClick={() => void loadCourses()}>Retry</button></p>}
       {currentUser && (
         <button
           id="wd-enrollments-toggle"
@@ -38,10 +47,11 @@ export default function Dashboard() {
           onSubmit={(e) => {
             e.preventDefault();
             if (!course.name.trim()) return;
-            const id = addCourse({ ...course, name: course.name.trim() });
-            if (currentUser) enroll(currentUser._id, id);
-            setCourse({ ...emptyCourse });
-            setMessage("Course added.");
+            void run(async () => {
+              await addCourse({ ...course, name: course.name.trim() });
+              if (currentUser) await loadEnrollments(currentUser._id);
+              setCourse({ ...emptyCourse }); setMessage("Course added.");
+            });
           }}
         >
           <h2>{course._id ? "Edit Course" : "New Course"}</h2>
@@ -90,18 +100,20 @@ export default function Dashboard() {
           <div className="flex gap-3">
             <button
               id="wd-add-course-click"
+              disabled={busy}
               className="rounded bg-blue-600 px-3 py-2 text-white"
             >
               Add
             </button>
             <button
               type="button"
-              disabled={!course._id || !course.name.trim()}
+              disabled={busy || !course._id || !course.name.trim()}
               className="rounded border px-3 disabled:opacity-40"
               onClick={() => {
-                updateCourse({ ...course, name: course.name.trim() });
-                setCourse({ ...emptyCourse });
-                setMessage("Course updated.");
+                void run(async () => {
+                  await updateCourse({ ...course, name: course.name.trim() });
+                  setCourse({ ...emptyCourse }); setMessage("Course updated.");
+                });
               }}
             >
               Update
@@ -134,8 +146,10 @@ export default function Dashboard() {
                     className="text-red-700"
                     onClick={() => {
                       if (confirm(`Delete ${c.name}?`)) {
-                        deleteCourse(c._id);
-                        if (course._id === c._id) setCourse({ ...emptyCourse });
+                        void run(async () => {
+                          await deleteCourse(c._id);
+                          if (course._id === c._id) setCourse({ ...emptyCourse });
+                        });
                       }
                     }}
                   >
@@ -149,14 +163,16 @@ export default function Dashboard() {
                 ) ? (
                   <button
                     className="rounded bg-red-600 px-3 py-1 text-white"
-                    onClick={() => unenroll(currentUser._id, c._id)}
+                    disabled={busy}
+                    onClick={() => void run(() => unenroll(currentUser._id, c._id))}
                   >
                     Unenroll
                   </button>
                 ) : (
                   <button
                     className="rounded bg-green-700 px-3 py-1 text-white"
-                    onClick={() => enroll(currentUser._id, c._id)}
+                    disabled={busy}
+                    onClick={() => void run(() => enroll(currentUser._id, c._id))}
                   >
                     Enroll
                   </button>
@@ -165,7 +181,7 @@ export default function Dashboard() {
           </CourseCard>
         ))}
       </div>
-      {visible.length === 0 && (
+      {loaded && !error && visible.length === 0 && (
         <p>No enrolled courses. Select Enrollments to browse courses.</p>
       )}
     </div>

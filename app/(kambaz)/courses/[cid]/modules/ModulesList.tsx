@@ -1,12 +1,13 @@
 "use client";
-import { useState } from "react";
+import { errorMessage } from "@/lib/http";
+import { useEffect, useState } from "react";
 import { FaPencilAlt, FaTrash, FaGripVertical, FaPlus } from "react-icons/fa";
 import Lesson from "./Lesson";
 import GreenCheckmark from "./GreenCheckmark";
 import { useModulesStore } from "../../../store/modulesStore";
 import { useAccount } from "../../../account/AccountContext";
 export default function ModulesList({ cid }: { cid: string }) {
-  const { modules, addModule, updateModule, deleteModule } = useModulesStore();
+  const { modules, loadModules, addModule, updateModule, deleteModule } = useModulesStore();
   const { currentUser } = useAccount();
   const canEdit =
     !currentUser || ["FACULTY", "ADMIN"].includes(currentUser.role);
@@ -15,8 +16,24 @@ export default function ModulesList({ cid }: { cid: string }) {
   const [editing, setEditing] = useState("");
   const [draft, setDraft] = useState("");
   const [collapsed, setCollapsed] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    let active = true;
+    loadModules(cid).catch((error) => { if (active) setError(errorMessage(error)); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [cid, loadModules]);
+  async function run(action: () => Promise<void>) {
+    setBusy(true); setError("");
+    try { await action(); } catch (error) { setError(errorMessage(error)); }
+    finally { setBusy(false); }
+  }
   return (
     <div>
+      {error && <p role="alert">{error} <button onClick={() => void run(() => loadModules(cid))}>Retry</button></p>}
+      {loading && <p role="status">Loading modules…</p>}
       <div className="mb-3 flex flex-wrap gap-2">
         <button
           className="rounded border px-3 py-2"
@@ -45,9 +62,7 @@ export default function ModulesList({ cid }: { cid: string }) {
             onSubmit={(e) => {
               e.preventDefault();
               if (!name.trim()) return;
-              addModule(cid, name);
-              setName("");
-              setDialog(false);
+              void run(async () => { await addModule(cid, name); setName(""); setDialog(false); });
             }}
           >
             <h2>Add Module</h2>
@@ -62,7 +77,7 @@ export default function ModulesList({ cid }: { cid: string }) {
                 onChange={(e) => setName(e.target.value)}
               />
             </label>
-            <button className="rounded bg-red-600 px-3 py-2 text-white">
+            <button disabled={busy} className="rounded bg-red-600 px-3 py-2 text-white">
               Add Module
             </button>{" "}
             <button
@@ -94,8 +109,7 @@ export default function ModulesList({ cid }: { cid: string }) {
                       onSubmit={(e) => {
                         e.preventDefault();
                         if (draft.trim()) {
-                          updateModule(m._id, draft);
-                          setEditing("");
+                          void run(async () => { await updateModule(m._id, draft); setEditing(""); });
                         }
                       }}
                     >
@@ -109,7 +123,7 @@ export default function ModulesList({ cid }: { cid: string }) {
                           if (e.key === "Escape") setEditing("");
                         }}
                       />
-                      <button>Save</button>
+                      <button disabled={busy}>Save</button>
                       <button type="button" onClick={() => setEditing("")}>
                         Cancel
                       </button>
@@ -133,7 +147,7 @@ export default function ModulesList({ cid }: { cid: string }) {
                     <button
                       aria-label={`Delete ${m.name}`}
                       onClick={() => {
-                        if (confirm(`Delete ${m.name}?`)) deleteModule(m._id);
+                        if (confirm(`Delete ${m.name}?`)) void run(() => deleteModule(m._id));
                       }}
                     >
                       <FaTrash />
@@ -154,7 +168,7 @@ export default function ModulesList({ cid }: { cid: string }) {
             </li>
           ))}
       </ul>
-      {!modules.some((m) => m.course === cid) && <p>No modules yet.</p>}
+      {!loading && !error && !modules.some((m) => m.course === cid) && <p>No modules yet.</p>}
     </div>
   );
 }

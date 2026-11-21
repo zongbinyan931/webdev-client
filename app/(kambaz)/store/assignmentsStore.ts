@@ -1,33 +1,25 @@
 "use client";
 import { create } from "zustand";
-import initial from "../database/assignments.json";
-export type Assignment = (typeof initial)[number] & {
-  until?: string;
-  notes?: string;
-  group?: string;
-  gradeAs?: string;
-  submissionType?: string;
-  assignTo?: string;
-  options?: string[];
-};
+import type { Assignment } from "@/lib/types";
+import * as client from "../courses/client";
+export type { Assignment } from "@/lib/types";
 export const useAssignmentsStore = create<{
   assignments: Assignment[];
-  saveAssignment: (a: Assignment) => void;
-  deleteAssignment: (id: string, course: string) => void;
+  loadAssignments: (cid: string) => Promise<void>;
+  saveAssignment: (assignment: Assignment) => Promise<void>;
+  deleteAssignment: (id: string, course: string) => Promise<void>;
 }>((set) => ({
-  assignments: initial,
-  saveAssignment: (a) =>
-    set((s) => ({
-      assignments: a._id
-        ? s.assignments.map((x) =>
-            x._id === a._id && x.course === a.course ? a : x,
-          )
-        : [...s.assignments, { ...a, _id: crypto.randomUUID() }],
-    })),
-  deleteAssignment: (id, course) =>
-    set((s) => ({
-      assignments: s.assignments.filter(
-        (a) => !(a._id === id && a.course === course),
-      ),
-    })),
+  assignments: [],
+  loadAssignments: async (cid) => {
+    const assignments = await client.findAssignmentsForCourse(cid);
+    set((state) => ({ assignments: [...state.assignments.filter((item) => item.course !== cid), ...assignments] }));
+  },
+  saveAssignment: async (assignment) => {
+    const saved = assignment._id ? await client.updateAssignment(assignment) : await client.createAssignmentForCourse(assignment);
+    set((state) => ({ assignments: [...state.assignments.filter((item) => item._id !== saved._id), saved] }));
+  },
+  deleteAssignment: async (id) => {
+    await client.deleteAssignment(id);
+    set((state) => ({ assignments: state.assignments.filter((item) => item._id !== id) }));
+  },
 }));

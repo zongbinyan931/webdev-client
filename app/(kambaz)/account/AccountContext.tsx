@@ -1,30 +1,24 @@
 "use client";
-import { createContext, useContext, useState, ReactNode } from "react";
-import initial from "../database/users.json";
-export type User = (typeof initial)[number] & { password: string; dob: string };
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import axios from "axios";
+import type { User } from "@/lib/types";
+import { errorMessage } from "@/lib/http";
+import * as client from "./client";
+import { useEnrollmentsStore } from "../store/enrollmentsStore";
+import { useCoursesStore } from "../store/coursesStore";
+export type { User } from "@/lib/types";
 export const emptyUser: User = {
-  _id: "",
-  username: "",
-  password: "",
-  firstName: "",
-  lastName: "",
-  email: "",
-  dob: "",
-  role: "STUDENT",
-  loginId: "",
-  section: "",
-  lastActivity: "",
-  totalActivity: "",
+  _id: "", username: "", password: "", firstName: "", lastName: "", email: "", dob: "",
+  role: "STUDENT", loginId: "", section: "", lastActivity: "", totalActivity: "",
 };
 type Account = {
-  currentUser: User | null;
-  users: User[];
-  signin: (u: string, p: string) => boolean;
-  signup: (u: User) => boolean;
-  signout: () => void;
-  updateUser: (u: User) => void;
-  addUser: (u: User) => string;
-  deleteUser: (id: string) => void;
+  currentUser: User | null; pending: boolean;
+  signin: (username: string, password: string) => Promise<void>;
+  signup: (user: User) => Promise<void>;
+  signout: () => Promise<void>;
+  updateUser: (user: User) => Promise<User>;
+  addUser: (user: User) => Promise<User>;
+  deleteUser: (id: string) => Promise<void>;
 };
 const Context = createContext<Account | null>(null);
 export const useAccount = () => {
@@ -33,47 +27,49 @@ export const useAccount = () => {
   return value;
 };
 export default function AccountProvider({ children }: { children: ReactNode }) {
-  const [users, setUsers] = useState<User[]>(
-    initial.map((u) => ({ ...u, password: "123", dob: "" })),
-  );
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  function addUser(user: User) {
-    const _id = crypto.randomUUID();
-    setUsers((all) => [...all, { ...user, _id }]);
-    return _id;
+  const [pending, setPending] = useState(true);
+  const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
+  const loadEnrollments = useEnrollmentsStore((state) => state.loadEnrollments);
+  const clear = useEnrollmentsStore((state) => state.clear);
+  const loadCourses = useCoursesStore((state) => state.loadCourses);
+  useEffect(() => {
+    let active = true;
+    void loadCourses();
+    const restore = async () => {
+      try {
+        const user = await client.profile();
+        if (!active) return;
+        await loadEnrollments(user._id);
+        if (active) { setCurrentUser(user); setError(""); }
+      } catch (error) {
+        if (!active) return;
+        clear(); setCurrentUser(null);
+        setError(axios.isAxiosError(error) && error.response?.status === 401 ? "" : errorMessage(error));
+      } finally { if (active) setPending(false); }
+    };
+    void restore();
+    return () => { active = false; };
+  }, [loadCourses, loadEnrollments, clear, retry]);
+  async function acceptUser(user: User) {
+    await loadEnrollments(user._id);
+    setCurrentUser(user); setError("");
   }
-  return (
-    <Context.Provider
-      value={{
-        users,
-        currentUser,
-        signin: (username, password) => {
-          const user = users.find(
-            (u) => u.username === username && u.password === password,
-          );
-          if (!user) return false;
-          setCurrentUser(user);
-          return true;
-        },
-        signup: (user) => {
-          if (users.some((u) => u.username === user.username)) return false;
-          const _id = addUser(user);
-          setCurrentUser({ ...user, _id });
-          return true;
-        },
-        signout: () => setCurrentUser(null),
-        addUser,
-        updateUser: (user) => {
-          setUsers((all) => all.map((u) => (u._id === user._id ? user : u)));
-          if (currentUser?._id === user._id) setCurrentUser(user);
-        },
-        deleteUser: (id) => {
-          setUsers((all) => all.filter((u) => u._id !== id));
-          if (currentUser?._id === id) setCurrentUser(null);
-        },
-      }}
-    >
-      {children}
-    </Context.Provider>
-  );
+  return <Context.Provider value={{
+    currentUser, pending,
+    signin: async (username, password) => acceptUser(await client.signin(username, password)),
+    signup: async (user) => acceptUser(await client.signup(user)),
+    signout: async () => { await client.signout(); clear(); setCurrentUser(null); },
+    addUser: client.addUser,
+    updateUser: async (user) => {
+      const saved = await client.updateUser(user);
+      if (currentUser?._id === saved._id) setCurrentUser(saved);
+      return saved;
+    },
+    deleteUser: async (id) => { await client.deleteUser(id); if (currentUser?._id === id) { clear(); setCurrentUser(null); } },
+  }}>
+    {error && <p role="alert" className="m-3 rounded bg-red-100 p-3 text-red-800">{error} <button onClick={() => { setPending(true); setRetry(retry + 1); }}>Retry</button></p>}
+    {children}
+  </Context.Provider>;
 }

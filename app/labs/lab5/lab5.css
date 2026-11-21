@@ -1,0 +1,16 @@
+#wd-lab5 { max-width: 980px; }
+#wd-lab5 section { border-top: 1px solid #d1d5db; padding: 1.25rem 0; margin-top: 1.25rem; }
+#wd-lab5 h2 { font-size: 1.8rem; font-weight: 650; }
+#wd-lab5 h3 { font-size: 1.3rem; font-weight: 650; margin: 0.5rem 0 1rem; }
+#wd-lab5 h4 { font-size: 1.05rem; font-weight: 600; margin: 1.3rem 0 0.6rem; }
+#wd-lab5 label { display: block; margin: 0.6rem 0; }
+#wd-lab5 input:not([type="checkbox"]), #wd-lab5 select { border: 1px solid #9ca3af; border-radius: 0.3rem; padding: 0.4rem 0.6rem; margin: 0 0.5rem; max-width: 100%; }
+#wd-lab5 input[type="checkbox"] { margin-right: 0.35rem; }
+#wd-lab5 a { color: #174ea6; text-decoration: underline; }
+#wd-lab5 button { background: #1d4ed8; color: white; border-radius: 0.3rem; padding: 0.4rem 0.7rem; margin: 0.35rem 0.5rem 0.35rem 0; }
+#wd-lab5 button:disabled { opacity: 0.5; }
+#wd-lab5 pre { padding: 0.8rem; background: #f3f4f6; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0.75rem 0; }
+#wd-lab5 [role="alert"] { background: #fee2e2; color: #991b1b; padding: 0.8rem; border-radius: 0.3rem; margin-top: 0.8rem; }
+.lab5-fields, .lab5-links { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+.lab5-todos { list-style: none; padding: 0; }
+.lab5-todos > li { border: 1px solid #d1d5db; padding: 0.8rem; margin-top: 0.6rem; }

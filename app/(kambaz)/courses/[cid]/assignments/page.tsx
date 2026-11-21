@@ -1,5 +1,6 @@
 "use client";
-import { use, useState } from "react";
+import { errorMessage } from "@/lib/http";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useAssignmentsStore } from "../../../store/assignmentsStore";
 import { useAccount } from "../../../account/AccountContext";
@@ -10,12 +11,22 @@ export default function Assignments({
   params: Promise<{ cid: string }>;
 }) {
   const { cid } = use(params);
-  const { assignments, deleteAssignment } = useAssignmentsStore();
+  const { assignments, loadAssignments, deleteAssignment } = useAssignmentsStore();
   const { currentUser } = useAccount();
   const edit = !currentUser || ["FACULTY", "ADMIN"].includes(currentUser.role);
   const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let active = true;
+    loadAssignments(cid).catch((error) => { if (active) setError(errorMessage(error)); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [cid, loadAssignments]);
   return (
     <div id="wd-assignments">
+      {error && <p role="alert">{error}</p>}
+      {loading && <p role="status">Loading assignments…</p>}
       <div className="mb-4 flex flex-wrap justify-between gap-3">
         <input
           aria-label="Search assignments"
@@ -58,7 +69,7 @@ export default function Assignments({
                   aria-label={`Delete ${a.title}`}
                   onClick={() => {
                     if (confirm(`Delete ${a.title}?`))
-                      deleteAssignment(a._id, cid);
+                      void deleteAssignment(a._id, cid).catch((error) => setError(errorMessage(error)));
                   }}
                 >
                   Delete

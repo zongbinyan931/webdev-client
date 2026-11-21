@@ -1,27 +1,23 @@
 "use client";
 import { create } from "zustand";
-import initial from "../database/enrollments.json";
+import type { Enrollment } from "@/lib/types";
+import * as client from "../enrollments/client";
 export const useEnrollmentsStore = create<{
-  enrollments: typeof initial;
-  enroll: (user: string, course: string) => void;
-  unenroll: (user: string, course: string) => void;
+  enrollments: Enrollment[];
+  clear: () => void;
+  loadEnrollments: (uid: string) => Promise<void>;
+  enroll: (uid: string, cid: string) => Promise<void>;
+  unenroll: (uid: string, cid: string) => Promise<void>;
 }>((set) => ({
-  enrollments: initial,
-  enroll: (user, course) =>
-    set((s) =>
-      s.enrollments.some((e) => e.user === user && e.course === course)
-        ? s
-        : {
-            enrollments: [
-              ...s.enrollments,
-              { _id: crypto.randomUUID(), user, course },
-            ],
-          },
-    ),
-  unenroll: (user, course) =>
-    set((s) => ({
-      enrollments: s.enrollments.filter(
-        (e) => !(e.user === user && e.course === course),
-      ),
-    })),
+  enrollments: [],
+  clear: () => set({ enrollments: [] }),
+  loadEnrollments: async (uid) => set({ enrollments: await client.findEnrollments(uid) }),
+  enroll: async (uid, cid) => {
+    const saved = await client.enroll(uid, cid);
+    set((state) => ({ enrollments: [...state.enrollments.filter((item) => item._id !== saved._id), saved] }));
+  },
+  unenroll: async (uid, cid) => {
+    await client.unenroll(uid, cid);
+    set((state) => ({ enrollments: state.enrollments.filter((item) => !(item.user === uid && item.course === cid)) }));
+  },
 }));

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { HTTP_SERVER } from "@/lib/http";
 import { usePathname } from "next/navigation";
 const LINKS = [
   { href: "/labs", label: "Home" },
@@ -12,7 +13,9 @@ const LINKS = [
   { href: "https://kambaz.dev/book/ch1", label: "Chapter 1" },
   { href: "https://kambaz.dev/book/ch3", label: "Book Ch3" },
   { href: "https://kambaz.dev/book/ch4", label: "Book Ch4" },
-  { href: "https://github.com/zongbinyan931/webdev-client", label: "GitHub" },
+  { href: "https://github.com/zongbinyan931/webdev-client/tree/a5", label: "Client GitHub" },
+  { href: "https://github.com/zongbinyan931/webdev-server/tree/a5", label: "Server GitHub" },
+  { href: "https://kambaz.dev/book/ch5", label: "Book Ch5" },
 ];
 export default function TOC() {
   const pathname = usePathname();
@@ -27,6 +30,7 @@ export default function TOC() {
           return (
             <li key={href}>
               <Link
+                id={label === "Client GitHub" ? "wd-github" : label === "Server GitHub" ? "wd-server-github" : undefined}
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={active ? "active" : undefined}
@@ -36,6 +40,7 @@ export default function TOC() {
             </li>
           );
         })}
+        {HTTP_SERVER && <li><a id="wd-server-url" href={HTTP_SERVER}>Express Server</a></li>}
       </ul>
     </nav>
   );

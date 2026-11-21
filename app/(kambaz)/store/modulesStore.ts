@@ -1,37 +1,30 @@
 "use client";
 import { create } from "zustand";
-import initial from "../database/modules.json";
-export type Module = (typeof initial)[number];
+import type { Module } from "@/lib/types";
+import * as client from "../courses/client";
+export type { Module } from "@/lib/types";
 export const useModulesStore = create<{
   modules: Module[];
-  addModule: (course: string, name: string) => void;
-  updateModule: (id: string, name: string) => void;
-  deleteModule: (id: string) => void;
+  loadModules: (cid: string) => Promise<void>;
+  addModule: (cid: string, name: string) => Promise<void>;
+  updateModule: (id: string, name: string) => Promise<void>;
+  deleteModule: (id: string) => Promise<void>;
 }>((set) => ({
-  modules: initial,
-  addModule: (course, name) => {
-    if (name.trim())
-      set((s) => ({
-        modules: [
-          ...s.modules,
-          {
-            _id: crypto.randomUUID(),
-            course,
-            name: name.trim(),
-            description: "",
-            lessons: [],
-          },
-        ],
-      }));
+  modules: [],
+  loadModules: async (cid) => {
+    const modules = await client.findModulesForCourse(cid);
+    set((state) => ({ modules: [...state.modules.filter((item) => item.course !== cid), ...modules] }));
   },
-  updateModule: (id, name) => {
-    if (name.trim())
-      set((s) => ({
-        modules: s.modules.map((m) =>
-          m._id === id ? { ...m, name: name.trim() } : m,
-        ),
-      }));
+  addModule: async (cid, name) => {
+    const saved = await client.createModuleForCourse(cid, name.trim());
+    set((state) => ({ modules: [...state.modules, saved] }));
   },
-  deleteModule: (id) =>
-    set((s) => ({ modules: s.modules.filter((m) => m._id !== id) })),
+  updateModule: async (id, name) => {
+    const saved = await client.updateModule(id, name.trim());
+    set((state) => ({ modules: state.modules.map((item) => item._id === id ? saved : item) }));
+  },
+  deleteModule: async (id) => {
+    await client.deleteModule(id);
+    set((state) => ({ modules: state.modules.filter((item) => item._id !== id) }));
+  },
 }));

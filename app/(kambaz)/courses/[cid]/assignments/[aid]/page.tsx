@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { use } from "react";
+import { errorMessage } from "@/lib/http";
+import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   useAssignmentsStore,
@@ -13,8 +14,18 @@ export default function AssignmentEditor({
   params: Promise<{ cid: string; aid: string }>;
 }) {
   const { cid, aid } = use(params);
-  const { assignments, saveAssignment } = useAssignmentsStore();
+  const { assignments, loadAssignments, saveAssignment } = useAssignmentsStore();
   const router = useRouter();
+  const [loading, setLoading] = useState(aid !== "new");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    if (aid === "new") return;
+    let active = true;
+    loadAssignments(cid).catch((error) => { if (active) setError(errorMessage(error)); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [cid, aid, loadAssignments]);
   const { currentUser } = useAccount();
   const canEdit =
     !currentUser || ["FACULTY", "ADMIN"].includes(currentUser.role);
@@ -30,6 +41,8 @@ export default function AssignmentEditor({
           available: "",
         }
       : assignments.find((a) => a._id === aid && a.course === cid);
+  if (loading) return <p role="status">Loading assignment…</p>;
+  if (error && !assignment) return <p role="alert">{error}</p>;
   if (!assignment)
     return (
       <p>
@@ -43,13 +56,15 @@ export default function AssignmentEditor({
     <form
       id="wd-assignments-editor"
       key={aid}
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
         if (!canEdit) return;
         const data = new FormData(e.currentTarget);
         const value = (key: string) => String(data.get(key) ?? "");
         if (!value("wd-name").trim()) return;
-        saveAssignment({
+        setBusy(true); setError("");
+        try {
+        await saveAssignment({
           ...assignment,
           title: value("wd-name").trim(),
           description: value("wd-description"),
@@ -71,9 +86,12 @@ export default function AssignmentEditor({
           ].filter((k) => data.has(k)),
         });
         router.push(`/courses/${cid}/assignments`);
+        } catch (error) { setError(errorMessage(error)); }
+        finally { setBusy(false); }
       }}
     >
-      <fieldset disabled={!canEdit}>
+      {error && <p role="alert">{error}</p>}
+      <fieldset disabled={!canEdit || busy}>
         <p>Assignment id: {assignment._id}</p>
         <label htmlFor="wd-name">Assignment Name</label>
         <br />

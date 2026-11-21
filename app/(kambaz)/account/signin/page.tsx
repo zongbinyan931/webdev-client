@@ -1,4 +1,5 @@
 "use client";
+import { errorMessage } from "@/lib/http";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,14 +10,17 @@ export default function Signin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
   return (
     <form
       id="wd-signin-screen"
       className="max-w-md space-y-3"
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
-        if (signin(username.trim(), password)) router.push("/dashboard");
-        else setError("Invalid username or password.");
+        setBusy(true); setError("");
+        try { await signin(username.trim(), password); router.push("/dashboard"); }
+        catch (error) { setError(errorMessage(error)); }
+        finally { setBusy(false); }
       }}
     >
       <h2>Sign in</h2>
@@ -46,6 +50,7 @@ export default function Signin() {
       {error && <p role="alert">{error}</p>}
       <button
         id="wd-signin-btn"
+        disabled={busy}
         className="rounded bg-red-600 px-4 py-2 text-white"
       >
         Sign in
@@ -55,7 +60,7 @@ export default function Signin() {
       </p>
       <p className="text-sm">
         Practice accounts: iron_man (student), nick_fury (faculty). Password:
-        123. These accounts are for this client-side prototype.
+        123. These are demo accounts for the Kambaz application.
       </p>
     </form>
   );

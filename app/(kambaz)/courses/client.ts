@@ -1,0 +1,16 @@
+import { http } from "@/lib/http";
+import type { Assignment, Course, Module, User } from "@/lib/types";
+export const findAllCourses = async () => (await http.get<Course[]>("/api/courses")).data;
+export const findMyCourses = async () => (await http.get<Course[]>("/api/users/current/courses")).data;
+export const createCourse = async (course: Course) => (await http.post<Course>("/api/users/current/courses", course)).data;
+export const updateCourse = async (course: Course) => (await http.put<Course>(`/api/courses/${course._id}`, course)).data;
+export const deleteCourse = async (id: string) => { await http.delete(`/api/courses/${id}`); };
+export const findModulesForCourse = async (cid: string) => (await http.get<Module[]>(`/api/courses/${cid}/modules`)).data;
+export const createModuleForCourse = async (cid: string, name: string) => (await http.post<Module>(`/api/courses/${cid}/modules`, { name })).data;
+export const updateModule = async (id: string, name: string) => (await http.put<Module>(`/api/modules/${id}`, { name })).data;
+export const deleteModule = async (id: string) => { await http.delete(`/api/modules/${id}`); };
+export const findAssignmentsForCourse = async (cid: string) => (await http.get<Assignment[]>(`/api/courses/${cid}/assignments`)).data;
+export const createAssignmentForCourse = async (assignment: Assignment) => (await http.post<Assignment>(`/api/courses/${assignment.course}/assignments`, assignment)).data;
+export const updateAssignment = async (assignment: Assignment) => (await http.put<Assignment>(`/api/assignments/${assignment._id}`, assignment)).data;
+export const deleteAssignment = async (id: string) => { await http.delete(`/api/assignments/${id}`); };
+export const findUsersForCourse = async (cid: string) => (await http.get<User[]>(`/api/courses/${cid}/users`)).data;

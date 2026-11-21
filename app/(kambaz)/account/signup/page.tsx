@@ -1,4 +1,5 @@
 "use client";
+import { errorMessage } from "@/lib/http";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,21 +8,23 @@ export default function Signup() {
   const [user, setUser] = useState({ ...emptyUser });
   const [verify, setVerify] = useState("");
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
   const { signup } = useAccount();
   const router = useRouter();
   return (
     <form
       id="wd-signup-screen"
       className="max-w-md space-y-3"
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
         if (user.password !== verify) {
           setError("Passwords do not match.");
           return;
         }
-        if (signup({ ...user, username: user.username.trim() }))
-          router.push("/account/profile");
-        else setError("Username already exists.");
+        setBusy(true); setError("");
+        try { await signup({ ...user, username: user.username.trim() }); router.push("/account/profile"); }
+        catch (error) { setError(errorMessage(error)); }
+        finally { setBusy(false); }
       }}
     >
       <h2>Sign up</h2>
@@ -66,7 +69,7 @@ export default function Signup() {
         </select>
       </label>
       {error && <p role="alert">{error}</p>}
-      <button className="rounded bg-red-600 px-4 py-2 text-white">
+      <button disabled={busy} className="rounded bg-red-600 px-4 py-2 text-white">
         Sign up
       </button>
       <p>

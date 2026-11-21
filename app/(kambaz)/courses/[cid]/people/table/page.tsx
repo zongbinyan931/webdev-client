@@ -1,5 +1,8 @@
 "use client";
-import { use, useState } from "react";
+import { errorMessage } from "@/lib/http";
+import type { User } from "@/lib/types";
+import { findUsersForCourse } from "../../../client";
+import { use, useEffect, useState } from "react";
 import { emptyUser, useAccount } from "../../../../account/AccountContext";
 import { useEnrollmentsStore } from "../../../../store/enrollmentsStore";
 export default function People({
@@ -8,14 +11,24 @@ export default function People({
   params: Promise<{ cid: string }>;
 }) {
   const { cid } = use(params);
-  const { users, currentUser, addUser, updateUser } = useAccount();
-  const { enrollments, enroll, unenroll } = useEnrollmentsStore();
+  const { currentUser, addUser, updateUser } = useAccount();
+  const { enroll, unenroll } = useEnrollmentsStore();
   const [draft, setDraft] = useState({ ...emptyUser });
   const [editing, setEditing] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    let active = true;
+    findUsersForCourse(cid).then((data) => { if (active) setUsers(data); })
+      .catch((error) => { if (active) setError(errorMessage(error)); });
+    return () => { active = false; };
+  }, [cid]);
   const canEdit =
     !currentUser || ["FACULTY", "ADMIN"].includes(currentUser.role);
   return (
     <div id="wd-people-table">
+      {error && <p role="alert">{error}</p>}
       {canEdit && (
         <button
           className="mb-3 rounded border p-2"
@@ -30,23 +43,25 @@ export default function People({
       {editing && (
         <form
           className="mb-4 grid gap-2 rounded border p-3"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            if (draft._id) updateUser(draft);
-            else {
-              const id = addUser(draft);
-              enroll(id, cid);
-            }
-            setEditing(false);
+            setBusy(true); setError("");
+            try {
+              if (draft._id) await updateUser(draft);
+              else { const user = await addUser(draft); await enroll(user._id, cid); }
+              setUsers(await findUsersForCourse(cid)); setEditing(false);
+            } catch (error) { setError(errorMessage(error)); }
+            finally { setBusy(false); }
           }}
         >
           {(
-            ["username", "firstName", "lastName", "email", "section"] as const
+            ["username", "password", "firstName", "lastName", "email", "section"] as const
           ).map((k) => (
             <label key={k}>
               {k}
               <input
-                required={k === "username" || k === "firstName"}
+                type={k === "password" ? "password" : "text"}
+                required={k === "username" || k === "firstName" || (k === "password" && !draft._id)}
                 className="ml-2 rounded border p-2"
                 value={draft[k]}
                 onChange={(e) => setDraft({ ...draft, [k]: e.target.value })}
@@ -64,7 +79,7 @@ export default function People({
               ))}
             </select>
           </label>
-          <button>Save</button>
+          <button disabled={busy}>Save</button>
           <button type="button" onClick={() => setEditing(false)}>
             Cancel
           </button>
@@ -91,9 +106,7 @@ export default function People({
           </thead>
           <tbody>
             {users
-              .filter((u) =>
-                enrollments.some((e) => e.user === u._id && e.course === cid),
-              )
+
               .map((u) => (
                 <tr key={u._id} className="border-t odd:bg-neutral-50">
                   <td className="p-2">
@@ -108,7 +121,7 @@ export default function People({
                     <td className="p-2">
                       <button
                         onClick={() => {
-                          setDraft({ ...u });
+                          setDraft({ ...u, password: "" });
                           setEditing(true);
                         }}
                       >
@@ -119,7 +132,7 @@ export default function People({
                           if (
                             confirm(`Remove ${u.firstName} from this course?`)
                           )
-                            unenroll(u._id, cid);
+                            void unenroll(u._id, cid).then(() => setUsers((all) => all.filter((person) => person._id !== u._id))).catch((error) => setError(errorMessage(error)));
                         }}
                       >
                         Remove
