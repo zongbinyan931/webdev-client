@@ -14,7 +14,7 @@ const LINKS = [
   { href: "https://kambaz.dev/book/ch3", label: "Book Ch3" },
   { href: "https://kambaz.dev/book/ch4", label: "Book Ch4" },
   { href: "https://github.com/zongbinyan931/webdev-client/tree/a5", label: "Client GitHub" },
-  { href: "https://github.com/zongbinyan931/webdev-server/tree/a5", label: "Server GitHub" },
+  { href: "https://github.com/zongbinyan931/-webdev-server/tree/a5", label: "Server GitHub" },
   { href: "https://kambaz.dev/book/ch5", label: "Book Ch5" },
 ];
 export default function TOC() {

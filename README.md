@@ -6,7 +6,7 @@ The `a5` branch connects Kambaz to an Express server and adds the Chapter 5 HTTP
 
 ## Run locally
 
-Start [webdev-server](https://github.com/zongbinyan931/webdev-server/tree/a5) on port 4000 first. In this project:
+Start [webdev-server](https://github.com/zongbinyan931/-webdev-server/tree/a5) on port 4000 first. In this project:
 
 ```sh
 npm ci
